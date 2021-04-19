@@ -14,7 +14,9 @@ mongoose.connect(process.env.MONGODB_URI, {
 });
 
 const signRoutes = require("./routes/user");
+const roomRoutes = require("./routes/rooms");
 app.use(signRoutes);
+app.use(roomRoutes);
 
 app.all("/", function (req, res) {
   res.json({ message: "Welcome to Airbnb Application !" });
