@@ -1,3 +1,3 @@
 # Airbnb
 
-Clone du site Airbnb
+Backend pour l'application clone Airbnb
