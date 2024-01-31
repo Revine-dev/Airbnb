@@ -6,8 +6,11 @@ const Room = mongoose.model("Room", {
   price: Number,
   ratingValue: Number,
   reviews: Number,
-  photos: [Object],
-  location: [Number],
+  photos: Array,
+  location: {
+    type: [Number],
+    index: "2d",
+  },
   user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",

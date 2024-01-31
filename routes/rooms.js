@@ -1,46 +1,44 @@
 const express = require("express");
 const router = express.Router();
+const cloudinary = require("cloudinary").v2;
 
 const Room = require("../models/Room");
 const User = require("../models/User");
 
 const isAuthenticated = require("../middlewares/isAuthenticated");
+const noModification = require("../middlewares/noModification");
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET,
+});
 
 /* Create room */
 router.post("/room/publish", isAuthenticated, async (req, res) => {
-  // dans cette route, on appelle le middleware "isAuthenticated" pour vérifier que l'utilisateur qui poste une annonce est présent en BDD
   if (
     req.fields.title &&
     req.fields.price &&
     req.fields.description &&
     req.fields.location
   ) {
-    // on vérifie que le titre, le prix, la description et la localisation ont bien été renseignés
     try {
       const locationTab = [req.fields.location.lat, req.fields.location.lng];
-      // on crée un tableau pour les données de localisation
-
       const newRoom = new Room({
         title: req.fields.title,
         description: req.fields.description,
         price: req.fields.price,
         location: locationTab,
         user: req.user._id,
-        // dans la fonction "isAuthenticated", a été ajoutée la clé "user" à req ce qui permet ici de retrouver l'id de l'utilisateur qui publie une annonce
       });
       await newRoom.save();
 
       const user = await User.findById(req.user._id);
-      // on recherche en BDD l'utilisateur' qui a posté l'annonce
       let tab = user.rooms;
-      // on crée un tableau nommé "tab", équivalent au tableau contenant les références des annonces
       tab.push(newRoom._id);
-      // on ajoute à ce tableau l'id de l'annonce qui vient d'être créée
       await User.findByIdAndUpdate(req.user._id, {
         rooms: tab,
       });
-      // on modifie, en BDD, la clé "rooms" de l'utilisateur
-
       res.json(newRoom);
     } catch (error) {
       res.status(400).json({ error: error.message });
@@ -52,36 +50,112 @@ router.post("/room/publish", isAuthenticated, async (req, res) => {
 
 /* Get rooms */
 router.get("/rooms", async (req, res) => {
+  const queryTab = Object.keys(req.query);
+
   try {
-    const rooms = await Room.find({}, { description: false }).populate({
-      path: "user",
-      select: "account",
-    });
-    // la fonction find() renvoie un tableau de tous les documents de la collection rooms
-    // le premier paramètre est un objet vide, il signifie qu'il n'y a pas de filtres spécifiques à cette recherche
-    // le deuxième paramètre est un objet dans lequel on précise quels champs ne doivent pas être retournés (ici, "description")
-    // la fonction populate permet ici d'afficher les informations de l'utilisateur du champ "account"
-    res.json(rooms);
+    if (queryTab.length > 0) {
+      const createFilters = (req) => {
+        const filters = {};
+
+        if (req.query.title) {
+          filters.title = new RegExp(req.query.title, "i");
+        }
+
+        if (req.query.priceMin) {
+          filters.price = {};
+          filters.price.$gte = req.query.priceMin;
+        }
+
+        if (req.query.priceMax) {
+          if (filters.price) {
+            filters.price.$lte = req.query.priceMax;
+          } else {
+            filters.price = {};
+            filters.price.$lte = req.query.priceMax;
+          }
+        }
+
+        return filters;
+      };
+
+      const filters = createFilters(req);
+
+      const search = Room.find(filters, { description: false }).populate({
+        path: "user",
+        select: "account",
+      });
+
+      if (req.query.sort === "price-asc") {
+        search.sort({ price: 1 });
+      } else if (req.query.sort === "price-desc") {
+        search.sort({ price: -1 });
+      }
+
+      if (req.query.page) {
+        const page = Number(req.query.page);
+        const limit = Number(req.query.limit);
+        search.limit(limit).skip(limit * (page - 1));
+      }
+
+      const rooms = await search;
+
+      res.json(rooms);
+    } else {
+      const rooms = await Room.find();
+
+      if (rooms.length > 20) {
+        const maxRooms = 20;
+
+        let randomRooms = [];
+
+        for (let i = 0; i < maxRooms; i++) {
+          const randomNumber = Math.floor(Math.random() * rooms.length);
+
+          if (randomRooms.indexOf(rooms[randomNumber]) === -1) {
+            randomRooms.push(rooms[randomNumber]);
+          }
+        }
+        res.json(randomRooms);
+      } else {
+        res.json(rooms);
+      }
+    }
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
+/* Get rooms around user */
+router.get("/rooms/around", async (req, res) => {
+  if (req.query.longitude && req.query.latitude) {
+    try {
+      const rooms = await Room.find({
+        location: {
+          $near: [req.query.latitude, req.query.longitude],
+          $maxDistance: 0.1,
+        },
+      });
+
+      res.json(rooms);
+    } catch (error) {
+      res.status(400).json({ error: error.message });
+    }
+  } else {
+    res.status(400).json({ error: "Missing location" });
+  }
+});
+
 /* Get one room */
 router.get("/rooms/:id", async (req, res) => {
-  // ":id" permet de récupérer l'id d'une annonce passé en paramètre dans la route
   if (req.params.id) {
     try {
       const room = await Room.findById(req.params.id).populate({
         path: "user",
         select: "account",
       });
-      // la fonction findById() permet de rechercher une annonce précise(à partir de son id)
       if (room) {
-        // si une annonce a bien été trouvée en BDD
         res.json(room);
       } else {
-        // si l'annonce n'a pas été trouvée : room = null
         res.json({ message: "Room not found" });
       }
     } catch (error) {
@@ -92,121 +166,228 @@ router.get("/rooms/:id", async (req, res) => {
   }
 });
 
-/* Update room */
-router.put("/room/update/:id", isAuthenticated, async (req, res) => {
-  if (req.params.id) {
-    // on vérifie que l'id de l'annonce est bien reçu
-    try {
-      const room = await Room.findById(req.params.id);
-      // on recherche l'annonce en BDD grâce à son id
-      if (room) {
-        // si l'annonce existe bien en BDD
+/* Update room (except pictures) */
+router.put(
+  "/room/update/:id",
+  [noModification, isAuthenticated],
+  async (req, res) => {
+    if (req.params.id) {
+      try {
+        const room = await Room.findById(req.params.id);
 
-        const userId = req.user._id;
-        // on récupère l'id de l'utilisateur stocké dans req.user grâce au middleware "isAuthenticated"
-        const roomUserId = room.user;
-        // on récupère l'id de l'utilisateur lié à cette annonce
+        if (room) {
+          const userId = req.user._id;
+          const roomUserId = room.user;
 
-        if (String(userId) === String(roomUserId)) {
-          // on vérifie que l'utilisateur souhaitant modifier l'annonce est bien le propriétaire de l'annonce
-          // on compare les 2 id (les "ObjectId" étant des objets, on les convertit en string)
-          if (
-            req.fields.title ||
-            req.fields.price ||
-            req.fields.description ||
-            req.fields.location
-          ) {
-            // on vérifie qu'au moins une modification de l'annonce a été envoyée
+          if (String(userId) === String(roomUserId)) {
+            if (
+              req.fields.title ||
+              req.fields.price ||
+              req.fields.description ||
+              req.fields.location
+            ) {
+              const newObj = {};
 
-            const newObj = {};
-            // on crée un objet qui contiendra les modifications envoyées
-            if (req.fields.price) {
-              newObj.price = req.fields.price;
+              if (req.fields.price) {
+                newObj.price = req.fields.price;
+              }
+              if (req.fields.title) {
+                newObj.title = req.fields.title;
+              }
+              if (req.fields.description) {
+                newObj.description = req.fields.description;
+              }
+              if (req.fields.location) {
+                newObj.location = [
+                  req.fields.location.lat,
+                  req.fields.location.lng,
+                ];
+              }
+
+              await Room.findByIdAndUpdate(req.params.id, newObj);
+              const roomUpdated = await Room.findById(req.params.id);
+              res.json(roomUpdated);
+            } else {
+              res.status(400).json({ error: "Missing parameters" });
             }
-            if (req.fields.title) {
-              newObj.title = req.fields.title;
-            }
-            if (req.fields.description) {
-              newObj.description = req.fields.description;
-            }
-            if (req.fields.location) {
-              newObj.location = [
-                req.fields.location.lat,
-                req.fields.location.lng,
-              ];
-            }
-
-            await Room.findByIdAndUpdate(req.params.id, newObj);
-            // on modifie l'annonce en lui passant newObj; ceci aura pour effet de ne modifier en BDD que les clés présentes dans newObj
-
-            const roomUpdated = await Room.findById(req.params.id);
-            // on recherche de nouveau l'annonce une fois toutes les modifications effectuées
-            res.json(roomUpdated);
           } else {
-            // si aucune modification de l'annonce n'a été envoyée
-            res.status(400).json({ error: "Missing parameters" });
+            res.status(401).json({ error: "Unauthorized" });
           }
         } else {
-          // si celui qui modifie n'est pas le propriétaire de l'annonce
-          res.status(401).json({ error: "Unauthorized" });
+          res.status(400).json({ error: "Room not found" });
+        }
+      } catch (error) {
+        res.status(400).json({ error: error.message });
+      }
+    } else {
+      res.status(400).json({ error: "Missing room id" });
+    }
+  }
+);
+
+/* Upload one picture */
+router.put(
+  "/room/upload_picture/:id",
+  [noModification, isAuthenticated],
+  async (req, res) => {
+    if (req.params.id) {
+      if (req.files.picture) {
+        try {
+          const room = await Room.findById(req.params.id);
+
+          if (room) {
+            const roomUserId = room.user;
+
+            if (String(roomUserId) === String(req.user._id)) {
+              let tab = room.photos;
+
+              if (tab.length < 5) {
+                await cloudinary.uploader.upload(
+                  req.files.picture.path,
+
+                  async function (error, result) {
+                    const newObj = {
+                      url: result.secure_url,
+                      picture_id: result.public_id,
+                    };
+
+                    tab.push(newObj);
+                  }
+                );
+
+                await Room.findByIdAndUpdate(req.params.id, { photos: tab });
+
+                const roomUpdated = await Room.findById(req.params.id);
+                res.json(roomUpdated);
+              } else {
+                res
+                  .status(400)
+                  .json({ error: "Can't add more than 5 pictures" });
+              }
+            } else {
+              res.status(401).json({ error: "Unauthorized" });
+            }
+          } else {
+            res.status(400).json({ error: "Room not found" });
+          }
+        } catch (error) {
+          res.status(400).json({ error: error.message });
         }
       } else {
-        // si l'annonce n'existe pas en BDD
-        res.status(400).json({ error: "Room not found" });
+        res.status(400).json({ error: "Missing parameters" });
       }
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+    } else {
+      res.status(400).json({ error: "Missing room id" });
     }
-  } else {
-    // si l'id de l'annonce n'a pas été renseigné
-    res.status(400).json({ error: "Missing room id" });
   }
-});
+);
+
+/* Delete one picture */
+router.put(
+  "/room/delete_picture/:id",
+  [noModification, isAuthenticated],
+  async (req, res) => {
+    if (req.params.id) {
+      try {
+        if (req.fields.picture_id) {
+          const room = await Room.findById(req.params.id);
+
+          if (room) {
+            const userId = req.user._id;
+            const roomUserId = room.user;
+
+            if (String(userId) === String(roomUserId)) {
+              let picture_id = req.fields.picture_id;
+
+              let tab = room.photos;
+
+              let isPhoto = false;
+              for (let y = 0; y < tab.length; y++) {
+                if (tab[y].picture_id === picture_id) {
+                  isPhoto = true;
+                }
+              }
+
+              if (isPhoto === false) {
+                res.status(400).json({ error: "Picture not found" });
+              } else {
+                for (let i = 0; i < tab.length; i++) {
+                  if (tab[i].picture_id === picture_id) {
+                    let num = tab.indexOf(tab[i]);
+                    tab.splice(num, 1);
+
+                    await cloudinary.uploader.destroy(picture_id);
+
+                    await Room.findByIdAndUpdate(req.params.id, {
+                      photos: tab,
+                    });
+                  }
+                }
+                res.status(200).json({ message: "Picture deleted" });
+              }
+            } else {
+              res.status(401).json({ error: "Unauthorized" });
+            }
+          } else {
+            res.status(400).json({ error: "Room not found" });
+          }
+        } else {
+          res.status(400).json({ error: "Missing picture id" });
+        }
+      } catch (error) {
+        res.status(400).json({ error: error.message });
+      }
+    } else {
+      res.status(400).json({ error: "Missing room id" });
+    }
+  }
+);
 
 /* Delete room */
-router.delete("/room/delete/:id", isAuthenticated, async (req, res) => {
-  if (req.params.id) {
-    try {
-      const room = await Room.findById(req.params.id);
-      if (room) {
-        // si l'annonce existe bien en BDD
+router.delete(
+  "/room/delete/:id",
+  [noModification, isAuthenticated],
+  async (req, res) => {
+    if (req.params.id) {
+      try {
+        const room = await Room.findById(req.params.id);
+        if (room) {
+          const userId = req.user._id;
+          const roomUserId = room.user;
+          if (String(userId) === String(roomUserId)) {
+            const photosTab = room.photos;
 
-        const userId = req.user._id;
-        // on récupère l'id de l'utilisateur stocké dans req.user grâce au middleware "isAuthenticated"
-        const roomUserId = room.user;
-        // on récupère l'id de l'utilisateur lié à l'annonce que l'on souhaite supprimer
+            for (let i = 0; i < photosTab.length; i++) {
+              let picture_id = photosTab[i].picture_id;
+              await cloudinary.uploader.destroy(picture_id);
+            }
 
-        if (String(userId) === String(roomUserId)) {
-          await Room.findByIdAndRemove(req.params.id);
-          // on supprime l'annonce en BDD
+            await Room.findByIdAndRemove(req.params.id);
 
-          const user = await User.findById(userId);
-          // on recherche l'utilisateur en BDD
+            const user = await User.findById(userId);
 
-          let tab = user.rooms;
-          let num = tab.indexOf(req.params.id);
-          tab.splice(num, 1);
-          // on supprime du tableau "rooms" l'id de l'annonce qui vient d'être supprimée en BDD
-          await User.findByIdAndUpdate(userId, {
-            rooms: tab,
-          });
-          // on modifie "rooms" en BDD : l'annonce supprimée n'apparaitra plus dans le tableau des annonces de l'utilisateur
+            let tab = user.rooms;
+            let num = tab.indexOf(req.params.id);
+            tab.splice(num, 1);
 
-          res.status(200).json({ message: "Room deleted" });
+            await User.findByIdAndUpdate(userId, {
+              rooms: tab,
+            });
+
+            res.status(200).json({ message: "Room deleted" });
+          } else {
+            res.status(401).json({ error: "Unauthorized" });
+          }
         } else {
-          // si celui qui supprime n'est pas le propriétaire de l'annonce
-          res.status(401).json({ error: "Unauthorized" });
+          res.status(400).json({ error: "Room not found" });
         }
-      } else {
-        // si l'annonce n'existe pas en BDD
-        res.status(400).json({ error: "Room not found" });
+      } catch (error) {
+        res.status(400).json({ error: error.message });
       }
-    } catch (error) {
-      res.status(400).json({ error: error.message });
+    } else {
+      res.status(400).json({ error: "Missing room id" });
     }
-  } else {
-    res.status(400).json({ error: "Missing room id" });
   }
-});
+);
 
 module.exports = router;

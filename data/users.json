@@ -1,0 +1,86 @@
+[
+  {
+    "_id": "58ff73cc1765a998979a3390",
+    "email": "nono@airbnb-api.com",
+    "account": {
+      "username": "nono",
+      "name": "Nono le petit Robot",
+      "description": "Courageous adventurer !",
+      "photo": {
+        "url": "https://res.cloudinary.com/lereacteur-apollo/image/upload/v1605177745/apollo/lereacteur/React%20Native/Exercice%20Airbnb/nono_rk9p89.png",
+        "picture_id": "a142a09aa"
+      }
+    },
+    "rooms": ["58ff73d11765a998979a3396"]
+  },
+  {
+    "_id": "58ff73cc1765a998979a3390",
+    "email": "alice@airbnb-api.com",
+    "account": {
+      "username": "alice-75",
+      "name": "Alice",
+      "description": "We love this wonderful city and we're pleased to be able to offer this apt so that you may enjoy it as well. Our wish is for you to feel very comfortable and get the most out of your stay. Welcome to Paris!",
+      "photo": {
+        "url": "https://a2.muscache.com/im/pictures/a137f243-fbe3-4806-9caa-3d7d1448f201.jpg?aki_policy=profile_x_medium",
+        "picture_id": "a137f243"
+      }
+    },
+    "rooms": ["58ff73d11765a998979a3396"]
+  },
+  {
+    "_id": "58ff73cc1765a998979a338d",
+    "email": "charles@airbnb-api.com",
+    "account": {
+      "username": "Charles-airbnb",
+      "name": "Charles",
+      "description": "I love cooking and travelling. I would be very happy to share with you my flat in Paris. I travel a lot for work and i don't often live in my apt.",
+      "photo": {
+        "url": "https://a1.muscache.com/im/users/29318295/profile_pic/1426344329/original.jpg?aki_policy=profile_x_medium",
+        "picture_id": "29318295"
+      }
+    },
+    "rooms": ["58ff73d11765a998979a3397"]
+  },
+  {
+    "_id": "58ff73cc1765a998979a338c",
+    "email": "astrid@airbnb-api.com",
+    "account": {
+      "username": "Astrid",
+      "name": "astrid",
+      "description": "My name is Astrid, I'm French, 29 years old and work for a communication agency specialized in food. I am passionate about food (of course!) and everything related to it. I also love reading, yoga, dogs, traveling, meeting new people and sharing a good meal with them !",
+      "photo": {
+        "url": "https://a2.muscache.com/im/users/4058432/profile_pic/1352061888/original.jpg?aki_policy=profile_x_medium",
+        "picture_id": "1352061888"
+      }
+    },
+    "rooms": ["58ff73d11765a998979a33a0"]
+  },
+  {
+    "_id": "58ff73cc1765a998979a338e",
+    "email": "robert@airbnb-api.com",
+    "account": {
+      "username": "Robert-Paris",
+      "name": "Robert",
+      "description": "Hello, I'm married, 2 kids, leaving in the center of Paris and loving it. I rent my own place and manage a few others. For all of them, I'll be happy to advise you on your stay in Paris, nice places, best walks to reach them, shops, restaurants..... I'll be there. See you soon in Paris.",
+      "photo": {
+        "url": "https://res.cloudinary.com/lereacteur/image/upload/v1578485133/airbnb/6FS84GM7De1DUfP8.jpg",
+        "picture_id": "v1578485133"
+      }
+    },
+    "rooms": ["58ff73cc1765a99897945391", "58ff73cc1765a9979391c532"]
+  },
+  {
+    "_id": "58ff73cc1765a998979a338f",
+    "email": "charlene@airbnb-api.com",
+    "account": {
+      "username": "Charlène",
+      "name": "Charlène",
+      "description": "In the center of Paris, you will find on the 4th floor of a typical Parisian building a very nice flat with all necessary equipment.",
+      "photo": {
+        "url": "https://a1.muscache.com/im/users/4654829/profile_pic/1410285266/original.jpg?aki_policy=profile_x_medium",
+        "picture_id": "1410285266"
+      }
+    },
+    "rooms": ["58ff73cc1765a998979a3391"]
+  }
+]

@@ -1,0 +1,162 @@
+[
+  {
+    "_id": "58ff73d11765a998979a3396",
+    "title": "Eiffel Tower Luxury 90m², 2 Terraces",
+    "description": "This is a completely renovated flat, close to Eiffel Tower and the Seine river, meant to inspire a true Parisian experience. Elegant two bedrooms of about 90 sqm with 2 terraces and a private car park.",
+    "price": 219,
+    "ratingValue": 5,
+    "reviews": 84,
+    "loc": [2.2841681, 48.8498514],
+    "photos": [
+      {
+        "url": "https://a0.muscache.com/im/pictures/78258884/5c57c1de_original.jpg",
+        "picture_id": "78258884"
+      },
+      {
+        "url": "https://a1.muscache.com/im/pictures/94116113/39f01888_original.jpg",
+        "picture_id": "94116113"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/63468cc8-6978-479b-a7a3-742c6e053c11.jpg",
+        "picture_id": "63468cc8"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/78259359/4142efdd_original.jpg",
+        "picture_id": "78259359"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/78259059/3f7fc75a_original.jpg",
+        "picture_id": "78259059"
+      }
+    ],
+    "user": "58ff73cc1765a998979a3390"
+  },
+
+  {
+    "_id": "58ff73d11765a998979a3397",
+    "title": "Logement entier - Gambetta, Paris",
+    "description": "Deux pièces à Gambetta. Une chambre et un salon avec cuisine ouverte. Salle de bain avec toilettes et baignoire. Plusieurs commerces tout au long de la rue. Proche du cimetière Père Lachaise, de Belleville, et du Parc des Buttes Chaumont. Très calme.",
+    "price": 120,
+    "ratingValue": 4,
+    "reviews": 5,
+    "loc": [2.3981123, 48.8613664],
+    "photos": [
+      {
+        "url": "https://a2.muscache.com/im/pictures/93801377/82b55123_original.jpg",
+        "picture_id": "93801377"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/93801440/8198ed7e_original.jpg",
+        "picture_id": "93801440"
+      },
+      {
+        "url": "https://a1.muscache.com/im/pictures/93801405/599ba94f_original.jpg",
+        "picture_id": "93801405"
+      },
+      {
+        "url": "https://a0.muscache.com/im/pictures/93801478/a1ad2ca8_original.jpg",
+        "picture_id": "93801478"
+      }
+    ],
+    "user": "58ff73cc1765a998979a338d"
+  },
+
+  {
+    "_id": "58ff73d11765a998979a33a0",
+    "title": "Apt à Montmartre lumineux et cosy",
+    "description": "Mon appartement est au pied de Montmartre, juste en bas des vignes, à moins de 10 min du Sacré Coeur. A 2 min du métro sur la ligne 12, il y a tous les commerces nécessaires dans le quartier. L'appartement vient d'être refait à neuf.",
+    "price": 80,
+    "ratingValue": 5,
+    "reviews": 50,
+    "loc": [2.3374505, 48.8901751],
+    "photos": [
+      {
+        "url": "https://a2.muscache.com/im/pictures/52a738e1-d699-4e6e-af31-b7aaf59e2b03.jpg",
+        "picture_id": "52a738e1"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/128dc52b-d10a-49f7-9e88-e11beee90491.jpg",
+        "picture_id": "128dc52b"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/584f9bfe-7048-4f60-822d-54ddabd76c81.jpg",
+        "picture_id": "584f9bfe"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/3e38b958-3ee6-43cb-9d07-7c35045584bf.jpg",
+        "picture_id": "3e38b958"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/4029375e-3e6b-43fb-9c80-7f15d226ed82.jpg",
+        "picture_id": "4029375e"
+      }
+    ],
+    "user": "58ff73cc1765a998979a338c"
+  },
+
+  {
+    "_id": "58ff73cc1765a99897945391",
+    "title": "Apt exceptionnel dans le quartier latin",
+    "description": "Vue exceptionnelle et hypercentral sont les meilleurs mots pour décrire notre appartement situé dans un très bel immeuble du 18e siècle au coeur du quartier latin en face de Notre-Dame.",
+    "price": 480,
+    "ratingValue": 5,
+    "reviews": 19,
+    "loc": [2.3434604, 48.8534078],
+    "photos": [
+      {
+        "url": "https://a2.muscache.com/im/pictures/60541451/7a1644c5_original.jpg",
+        "picture_id": "60541451"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/60541484/6a88b706_original.jpg",
+        "picture_id": "60541484"
+      },
+      {
+        "url": "https://a0.muscache.com/im/pictures/60538379/37f848e3_original.jpg",
+        "picture_id": "60538379"
+      },
+      {
+        "url": "https://a0.muscache.com/im/pictures/60539030/8732066b_original.jpg",
+        "picture_id": "60539030"
+      },
+      {
+        "url": "https://a1.muscache.com/im/pictures/60536951/d2059103_original.jpg",
+        "picture_id": "60536951"
+      }
+    ],
+    "user": "58ff73cc1765a998979a338e"
+  },
+
+  {
+    "_id": "58ff73cc1765a9979391c532",
+    "title": "Vue Tour Eiffel à Saint Germain!",
+    "description": "Appartement refait à neuf plein charme rue du Cherche-Midi, au cœur du 6eme arrondissement. A deux pas du Luxembourg et du Bon Marché. Deux chambres, sublime vue sur la Tour Eiffel, 2 balcons, très jolie salle de bain avec WC séparés. Cuisine équipée ouverte, canapé-lit, wifi... Un rêve!",
+    "price": 200,
+    "ratingValue": 5,
+    "reviews": 48,
+    "loc": [2.3215788, 48.8480923],
+    "photos": [
+      {
+        "url": "https://a2.muscache.com/im/pictures/a560cdc0-425d-4d7b-ab8a-f98481eeb23f.jpg",
+        "picture_id": "a560cdc0"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/38eb9bfe-bd03-4c21-a3b8-4d3c8e44c4c9.jpg",
+        "picture_id": "38eb9bfe"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/3e3b2eda-f99f-4ac3-94dd-3c3dc8f80c7a.jpg",
+        "picture_id": "3e3b2eda"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/25308387-a29c-4442-b927-39f2bd9c0e6f.jpg",
+        "picture_id": "25308387"
+      },
+      {
+        "url": "https://a2.muscache.com/im/pictures/db9f14c0-e7bc-4d2c-a87a-3f8ed0dce7ff.jpg",
+        "picture_id": "db9f14c0"
+      }
+    ],
+    "user": "58ff73cc1765a998979a338f"
+  }
+]
