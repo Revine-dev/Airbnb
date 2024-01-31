@@ -11,6 +11,7 @@ mongoose.connect(process.env.MONGODB_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
   useCreateIndex: true,
+  useFindAndModify: false,
 });
 
 const signRoutes = require("./routes/user");
@@ -26,6 +27,6 @@ app.all("*", function (req, res) {
   res.status(404).json({ error: "Ressource not found" });
 });
 
-app.listen(process.env.PORT, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log("Server started");
 });
